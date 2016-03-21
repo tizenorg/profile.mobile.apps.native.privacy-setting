@@ -44,29 +44,29 @@ struct ug_data_s *get_ug_data()
 static void *on_create(ui_gadget_h ug, enum ug_mode mode, app_control_h service, void *priv)
 {
 	struct ug_data_s *ugd = (struct ug_data_s *)priv;
-	return_if(!ug || !ugd, , , "!ug || !ugd");
+	log_if(!ug || !ugd, 1, "!ug || !ugd");
 
 	bindtextdomain(PACKAGE, LOCALEDIR);
 
 	ugd->ug = ug;
 
 	/* Get privacy list */
-	return_if(privilege_info_get_privacy_list(&(ugd->privacy_list)) != PRVMGR_ERR_NONE, , , "Failed to get privacy_list");
+	log_if(privilege_info_get_privacy_list(&(ugd->privacy_list)) != PRVMGR_ERR_NONE, 1, "Failed to get privacy_list");
 
 	/* Get parent layout */
 	ugd->parent_layout = ug_get_parent_layout(ug);
-	return_if(!ugd->parent_layout, , , "ugd->parent_layout is null");
+	log_if(!ugd->parent_layout, 1, "ugd->parent_layout is null");
 
 	/* Add bg */
 	ugd->bg = elm_bg_add(ugd->parent_layout);
-	return_if(!ugd->bg, , , "ugd->bg is null");
+	log_if(!ugd->bg, 1, "ugd->bg is null");
 
 	evas_object_size_hint_weight_set(ugd->bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_show(ugd->bg);
 
 	/* Add layout */
 	ugd->layout = elm_layout_add(ugd->parent_layout);
-	return_if(!ugd->layout, , , "ugd->layout is null");
+	log_if(!ugd->layout, 1, "ugd->layout is null");
 
 	elm_layout_theme_set(ugd->layout, "layout", "application", "default");
 	evas_object_size_hint_weight_set(ugd->layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
@@ -76,7 +76,7 @@ static void *on_create(ui_gadget_h ug, enum ug_mode mode, app_control_h service,
 
 	/* Add naviframe */
 	ugd->nf = elm_naviframe_add(ugd->layout);
-	return_if(!ugd->nf, , , "ugd->nf is null");
+	log_if(!ugd->nf, 1, "ugd->nf is null");
 
 	/* Create privacy list view */
 	create_privacy_list_view(ugd);
@@ -105,8 +105,8 @@ static void on_destroy(ui_gadget_h ug, app_control_h service, void *priv)
 {
 	LOGD("on_destroy");
 
-	return_if(ug == NULL, , , "ug is NULL");
-	return_if(priv == NULL, , , "priv is NULL");
+	log_if(ug == NULL, 1, "ug is NULL");
+	log_if(priv == NULL, 1, "priv is NULL");
 
 	struct ug_data_s *ugd = (struct ug_data_s *)priv;
 
@@ -148,7 +148,7 @@ static void on_event(ui_gadget_h ug, enum ug_event event, app_control_h service,
 
 static void on_key_event(ui_gadget_h ug, enum ug_key_event event, app_control_h service, void *priv)
 {
-	return_if(ug == NULL, , , "ug is NULL");
+	log_if(ug == NULL, 1, "ug is NULL");
 
 	switch (event) {
 	case UG_KEY_EVENT_END:
@@ -184,7 +184,7 @@ UG_MODULE_API int UG_MODULE_INIT(struct ug_module_ops *ops)
 
 UG_MODULE_API void UG_MODULE_EXIT(struct ug_module_ops *ops)
 {
-	return_if(ops == NULL, , -1, "ops is NULL.");
+	log_if(ops == NULL, 1, "ops is NULL.");
 
 	free(ops->priv);
 }

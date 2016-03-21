@@ -112,7 +112,7 @@ void create_privacy_package_list_view(struct ug_data_s* ugd, item_data_s *select
         item_data_s *id = calloc(sizeof(item_data_s), 1);
         id->index = i;
         char* temp[256];
-        sprintf(temp, "%s%s", selected_id->title, items[i]);
+        snprintf(temp, sizeof(temp), "%s%s", selected_id->title, items[i]);
         id->title = strdup(temp);
         //id->status = ;
         it = elm_genlist_item_append(genlist, itc, id, NULL, ELM_GENLIST_ITEM_NONE, privacy_package_selected_cb, id);

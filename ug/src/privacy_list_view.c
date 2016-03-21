@@ -29,7 +29,7 @@
 Eina_Bool quit_cb(void *data, Elm_Object_Item *it)
 {
 	struct ug_data_s* ugd = (struct ug_data_s*)data;
-	return_if(!ugd, , , "ugd is null");
+	log_if(!ugd, 1, "ugd is null");
 
 	ug_destroy_me(ugd->ug);
 	ugd->ug = NULL;

@@ -51,6 +51,15 @@ extern "C" {
         return returnValue; \
     }
 
+#define log_if(condition, level, ...) \
+	if (condition) { \
+		if (level) { \
+			LOGE(__VA_ARGS__); \
+		} else { \
+			LOGD(__VA_ARGS__); \
+		} \
+	}
+
 
 Evas_Object *common_genlist_add(Evas_Object *parent);
 Evas_Object *common_back_btn(struct ug_data_s *ugd);
