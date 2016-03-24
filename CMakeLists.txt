@@ -37,4 +37,4 @@ ADD_DEFINITIONS("-DUG_WAYLAND")
 ADD_SUBDIRECTORY(ug)
 #ADD_SUBDIRECTORY(po)
 
-INSTALL(FILES packaging/ug-setting-privacy-efl.xml DESTINATION ${TZ_SYS_SHARE}/packages)
+INSTALL(FILES packaging/ug-setting-privacy-efl.xml DESTINATION ${TZ_SYS_RO_PACKAGES}/)

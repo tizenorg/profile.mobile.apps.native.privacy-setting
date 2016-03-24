@@ -48,7 +48,7 @@ export FFLAGS="$FFLAGS -DTIZEN_EMULATOR_MODE"
 
 %{!?build_type:%define build_type "Release"}
 %cmake . -DCMAKE_INSTALL_PREFIX=%TZ_SYS_RO_UG \
-        -DTZ_SYS_SHARE=%TZ_SYS_SHARE \
+        -DTZ_SYS_RO_PACKAGES=%TZ_SYS_RO_PACKAGES \
         -DCMAKE_BUILD_TYPE=%{build_type} \
         -DVERSION=%version
 
@@ -65,6 +65,6 @@ make %{?_smp_mflags}
 %defattr(-,root,root,-)
 %manifest %name.manifest
 %license LICENSE
-%TZ_SYS_SHARE/packages/%name.xml
+%TZ_SYS_RO_PACKAGES/%name.xml
 %TZ_SYS_RO_UG/lib/libug-setting-privacy-efl.so*
 #%TZ_SYS_RO_UG/res/locale/*
