@@ -38,18 +38,18 @@ extern "C" {
 #endif
 
 #define return_if(condition, expr, returnValue, ...) \
-    if (condition) { \
+	if (condition) { \
 		LOGE(__VA_ARGS__); \
 		expr; \
 		return returnValue; \
 	}
 
 #define lreturn_if(condition, expr, returnValue, ...) \
-    if (condition) { \
-        LOGD(__VA_ARGS__); \
-        expr; \
-        return returnValue; \
-    }
+	if (condition) { \
+		LOGD(__VA_ARGS__); \
+		expr; \
+		return returnValue; \
+	}
 
 #define log_if(condition, level, ...) \
 	if (condition) { \
@@ -62,10 +62,10 @@ extern "C" {
 
 
 Evas_Object *common_genlist_add(Evas_Object *parent);
-Evas_Object *common_back_btn(struct ug_data_s *ugd);
+Evas_Object *common_back_btn_add(struct ug_data_s *ugd);
 
 #ifdef _cplusplus
 }
 #endif
 
-#endif // __UG_SETTING_PRIVACY_COMMON_UTILS_H_
+#endif /* __UG_SETTING_PRIVACY_COMMON_UTILS_H_ */
