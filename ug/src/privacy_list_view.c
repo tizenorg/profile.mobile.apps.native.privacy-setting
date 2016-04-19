@@ -80,7 +80,7 @@ void create_privacy_list_view(struct ug_data_s *ugd)
 	itc->func.del = gl_del_cb;
 	Elm_Object_Item *it = NULL;
 	int i = 0;
-	for (i = 0; i < g_list_length(ugd->privacy_list); ++i) {
+	for (i = 0; i < (int)g_list_length(ugd->privacy_list); ++i) {
 		item_data_s *id = calloc(sizeof(item_data_s), 1);
 		id->index = i;
 		id->title = (char*)g_list_nth_data(ugd->privacy_list, i);
