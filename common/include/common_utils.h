@@ -62,7 +62,7 @@ extern "C" {
 
 
 Evas_Object *common_genlist_add(Evas_Object *parent);
-Evas_Object *common_back_btn_add(struct ug_data_s *ugd);
+Evas_Object *common_back_btn_add(struct app_data_s *ad);
 
 #ifdef _cplusplus
 }

@@ -42,12 +42,12 @@ Evas_Object *common_genlist_add(Evas_Object *parent)
 
 static void back_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info)
 {
-	struct ug_data_s *ugd = (struct ug_data_s *)data;
-	return_if(!ugd, , , "ugd is null");
-	elm_naviframe_item_pop(ugd->nf);
+	struct app_data_s *ad = (struct app_data_s *)data;
+	return_if(!ad, , , "ad is null");
+	elm_naviframe_item_pop(ad->nf);
 }
 
-Evas_Object *common_back_btn_add(struct ug_data_s *ad)
+Evas_Object *common_back_btn_add(struct app_data_s *ad)
 {
 	Evas_Object *btn = elm_button_add(ad->nf);
 	elm_object_style_set(btn, "naviframe/back_btn/default");

@@ -20,9 +20,7 @@
  * @brief
  */
 
-#ifndef UG_MODULE_API
-#define UG_MODULE_API __attribute__ ((visibility("default")))
-#endif
+#include <bundle.h>
 
 #include <libintl.h>
 #include <efl_extension.h>
@@ -32,165 +30,112 @@
 #include "privacy_setting_ug.h"
 #include "privacy_view.h"
 
-#include <privilege_info.h>
-
-static struct ug_data_s *g_ugd;
-
-struct ug_data_s *get_ug_data()
+static void win_delete_request_cb(void *data, Evas_Object * obj, void *event_info)
 {
-	return g_ugd;
+	ui_app_exit();
 }
 
-static void *on_create(ui_gadget_h ug, enum ug_mode mode, app_control_h service, void *priv)
+static void app_start(void* data)
 {
-	struct ug_data_s *ugd = (struct ug_data_s *)priv;
-	log_if(!ug || !ugd, 1, "!ug || !ugd");
+	struct app_data_s* ad = (struct app_data_s*)data;
 
-	bindtextdomain(PACKAGE, LOCALEDIR);
+	/* Add conformant to window */
+	ad->conform = elm_conformant_add(ad->win);
+	evas_object_size_hint_weight_set(ad->conform, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	elm_win_resize_object_add(ad->win, ad->conform);
+	evas_object_show(ad->conform);
 
-	ugd->ug = ug;
+	/* Add layout to conformant */
+	ad->layout = elm_layout_add(ad->conform);
+	evas_object_size_hint_weight_set(ad->layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+	elm_layout_theme_set(ad->layout, "layout", "application", "default");
+	elm_object_content_set(ad->conform, ad->layout);
+	evas_object_show(ad->layout);
 
-	/* Get privacy list */
-	log_if(privilege_info_get_privacy_list(&(ugd->privacy_list)) != PRVMGR_ERR_NONE, 1, "Failed to get privacy_list");
+	/* Add naviframe to layout */
+	ad->nf = elm_naviframe_add(ad->layout);
+	log_if(!ad->nf, 1, "ad->nf is null");
 
-	/* Get parent layout */
-	ugd->parent_layout = ug_get_parent_layout(ug);
-	log_if(!ugd->parent_layout, 1, "ugd->parent_layout is null");
+	/* Create privacy menu view */
+	create_privacy_menu_view(ad);
 
-	/* Add bg */
-	ugd->bg = elm_bg_add(ugd->parent_layout);
-	log_if(!ugd->bg, 1, "ugd->bg is null");
+	elm_object_part_content_set(ad->layout, "elm.swallow.content", ad->nf);
+	eext_object_event_callback_add(ad->nf, EEXT_CALLBACK_BACK, eext_naviframe_back_cb, NULL);
+	eext_object_event_callback_add(ad->nf, EEXT_CALLBACK_MORE, eext_naviframe_more_cb, NULL);
+	evas_object_show(ad->nf);
 
-	evas_object_size_hint_weight_set(ugd->bg, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_show(ugd->bg);
-
-	/* Add layout */
-	ugd->layout = elm_layout_add(ugd->parent_layout);
-	log_if(!ugd->layout, 1, "ugd->layout is null");
-
-	elm_layout_theme_set(ugd->layout, "layout", "application", "default");
-	evas_object_size_hint_weight_set(ugd->layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-	evas_object_show(ugd->layout);
-
-	elm_object_part_content_set(ugd->layout, "elm.swallow.bg", ugd->bg);
-
-	/* Add naviframe */
-	ugd->nf = elm_naviframe_add(ugd->layout);
-	log_if(!ugd->nf, 1, "ugd->nf is null");
-
-	/* Create privacy list view */
-	create_privacy_list_view(ugd);
-
-	elm_object_part_content_set(ugd->layout, "elm.swallow.content", ugd->nf);
-	eext_object_event_callback_add(ugd->nf, EEXT_CALLBACK_BACK, eext_naviframe_back_cb, NULL);
-	eext_object_event_callback_add(ugd->nf, EEXT_CALLBACK_MORE, eext_naviframe_more_cb, NULL);
-	evas_object_show(ugd->nf);
-
-	return ugd->layout;
+	return ;
 }
 
-static void on_start(ui_gadget_h ug, app_control_h service, void *priv)
+static bool app_create(void * data)
 {
-}
+	struct app_data_s *ad = (struct app_data_s*)data;
 
-static void on_pause(ui_gadget_h ug, app_control_h service, void *priv)
-{
-}
+	elm_app_base_scale_set(1.8);
 
-static void on_resume(ui_gadget_h ug, app_control_h service, void *priv)
-{
-}
+	ad->win = elm_win_add(NULL, "setting-privacy", ELM_WIN_BASIC);
+	elm_win_indicator_mode_set(ad->win, ELM_WIN_INDICATOR_SHOW);
+	elm_win_indicator_opacity_set(ad->win, ELM_WIN_INDICATOR_OPAQUE);
 
-static void on_destroy(ui_gadget_h ug, app_control_h service, void *priv)
-{
-	LOGD("on_destroy");
-
-	log_if(ug == NULL, 1, "ug is NULL");
-	log_if(priv == NULL, 1, "priv is NULL");
-
-	struct ug_data_s *ugd = (struct ug_data_s *)priv;
-
-	if (ugd->theme) {
-		elm_theme_free(ugd->theme);
-		ugd->theme = NULL;
+	if (elm_win_wm_rotation_supported_get(ad->win)) {
+		int rots[4] = { 0, 90, 180, 270 };
+		elm_win_wm_rotation_available_rotations_set(ad->win, (const int *)(&rots), 4);
 	}
+	evas_object_smart_callback_add(ad->win, "delete,request", win_delete_request_cb, NULL);
+	evas_object_show(ad->win);
 
-	evas_object_hide(ugd->layout);
-	evas_object_del(ugd->layout);
-	ugd->layout = NULL;
+	app_start(ad);
+
+	return true;
 }
 
-static void on_message(ui_gadget_h ug, app_control_h msg, app_control_h service, void *priv)
+static void
+app_control(app_control_h app_control, void *data)
+{
+	/* Handle the launch request. */
+}
+
+static void
+app_pause(void *data)
+{
+	/* Take necessary actions when application becomes invisible. */
+}
+
+static void
+app_resume(void *data)
+{
+	/* Take necessary actions when application becomes visible. */
+}
+static void app_terminate(void *data)
 {
 }
 
-static void on_event(ui_gadget_h ug, enum ug_event event, app_control_h service, void *priv)
+static void ui_app_lang_changed(app_event_info_h event_info, void *user_data)
 {
-	switch (event) {
-	case UG_EVENT_LOW_MEMORY:
-		break;
-	case UG_EVENT_LOW_BATTERY:
-		break;
-	case UG_EVENT_LANG_CHANGE:
-		break;
-	case UG_EVENT_ROTATE_PORTRAIT:
-		break;
-	case UG_EVENT_ROTATE_PORTRAIT_UPSIDEDOWN:
-		break;
-	case UG_EVENT_ROTATE_LANDSCAPE:
-		break;
-	case UG_EVENT_ROTATE_LANDSCAPE_UPSIDEDOWN:
-		break;
-	default:
-		break;
-	}
+	/*APP_EVENT_LANGUAGE_CHANGED*/
 }
 
-static void on_key_event(ui_gadget_h ug, enum ug_key_event event, app_control_h service, void *priv)
+
+int main(int argc, char *argv[])
 {
-	log_if(ug == NULL, 1, "ug is NULL");
+	struct app_data_s ad = {0, };
+	int ret = 0;
 
-	switch (event) {
-	case UG_KEY_EVENT_END:
-		ug_destroy_me(ug);
-		break;
-	default:
-		break;
-	}
-}
+	ui_app_lifecycle_callback_s event_callback = {0, };
+	app_event_handler_h handlers[2] = {NULL, };
 
-UG_MODULE_API int UG_MODULE_INIT(struct ug_module_ops *ops)
-{
-	return_if(ops == NULL, , -1, "ops is NULL.");
+	ui_app_add_event_handler(&handlers[APP_EVENT_LANGUAGE_CHANGED], APP_EVENT_LANGUAGE_CHANGED, ui_app_lang_changed, &ad);
 
-	struct ug_data_s *ugd = (struct ug_data_s *)malloc(sizeof(struct ug_data_s));
-	return_if(ugd == NULL, , -1, "Fail to malloc ugd.");
+	event_callback.create = app_create;
+	event_callback.terminate = app_terminate;
+	event_callback.pause = app_pause;
+	event_callback.resume = app_resume;
+	event_callback.app_control = app_control;
 
-	ops->create = on_create;
-	ops->start = on_start;
-	ops->pause = on_pause;
-	ops->resume = on_resume;
-	ops->destroy = on_destroy;
-	ops->message = on_message;
-	ops->event = on_event;
-	ops->key_event = on_key_event;
-	ops->priv = ugd;
-	ops->opt = UG_OPT_INDICATOR_ENABLE;
-
-	g_ugd = ugd;
+	ret = ui_app_main(argc, argv, &event_callback, &ad);
+	if (ret != APP_ERROR_NONE)
+		dlog_print(DLOG_ERROR, LOG_TAG, "ui_app_main() is failed. err = %d", ret);
 
 	return 0;
 }
 
-UG_MODULE_API void UG_MODULE_EXIT(struct ug_module_ops *ops)
-{
-	log_if(ops == NULL, 1, "ops is NULL.");
-
-	free(ops->priv);
-}
-
-UG_MODULE_API int setting_plugin_reset(app_control_h service, void *priv)
-{
-	/* nothing to do for Setting>Reset */
-	return 0;
-}
