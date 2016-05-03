@@ -29,9 +29,16 @@
 
 #include "privacy_setting_ug.h"
 
+typedef struct {
+	char* pkgid;
+	GList* applist;
+	GList* privlist;
+} pkg_data_s;
+
 typedef struct item_data {
 	int index;
 	char *title;
+	char *pkgid;
 	bool status;
 } item_data_s;
 

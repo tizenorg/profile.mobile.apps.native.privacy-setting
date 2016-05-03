@@ -39,6 +39,7 @@ struct ug_data_s {
 	Elm_Theme *theme;
 
 	GList *privacy_list;
+	char* privacy;
 };
 
 struct ug_data_s *get_ug_data();
