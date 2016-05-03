@@ -14,33 +14,37 @@
  *    limitations under the License.
  */
 /*
- * @file        privacy_setting_ug.h
+ * @file        privacy_setting.h
  * @author      Yunjin Lee <yunjin-.lee@samsung.com>
  * @version     1.0
  * @brief
  */
 
-#ifndef __UG_SETTING_MANAGE_PRIVACY_EFL_H__
-#define __UG_SETTING_MANAGE_PRIVACY_EFL_H__
-
+#ifndef __UI_PRIVACY_SETTING_H__
+#define __UI_PRIVACY_SETTING_H__
 #include <Elementary.h>
 #include <ui-gadget.h>
 #include <ui-gadget-module.h>
 #include <glib.h>
 #include <app.h>
 
-struct ug_data_s {
+#define PRIVACY_MENU_SETTING "Privacy Setting"
+#define PRIVACY_MENU_GUARD "Privacy Guard"
+
+struct app_data_s {
 	Evas_Object *parent_layout;
+	Evas_Object *win;
+	Evas_Object *conform;
 	Evas_Object *bg;
 	Evas_Object *layout;
 	Evas_Object *nf;
-	ui_gadget_h ug;
 	void *data;
 	Elm_Theme *theme;
 
 	GList *privacy_list;
+	char* privacy;
 };
 
-struct ug_data_s *get_ug_data();
+struct app_data_s *get_app_data();
 
-#endif /* __UG_SETTING_MANAGE_PRIVACY_EFL_H__ */
+#endif /* __UI_PRIVACY_SETTING_H__ */

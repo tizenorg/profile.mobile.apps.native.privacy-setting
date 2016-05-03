@@ -1,8 +1,10 @@
-Name:    ug-setting-privacy-efl
-Summary: Privacy setting ui gadget
+%define	PREFIX	%{TZ_SYS_RO_APP}/%{name}
+
+Name:    org.tizen.privacy-setting
+Summary: Privacy setting ui application
 Version: 1.0.0
 Release: 1
-Group:   System/Libraries
+Group:   System/???
 License: Apache-2.0
 Source0: %{name}-%{version}.tar.gz
 Source1001: %{name}.manifest
@@ -23,6 +25,8 @@ BuildRequires: pkgconfig(ui-gadget-1)
 BuildRequires: pkgconfig(icu-i18n)
 BuildRequires: pkgconfig(libtzplatform-config)
 BuildRequires: pkgconfig(security-privilege-manager)
+BuildRequires: pkgconfig(security-manager)
+BuildRequires: pkgconfig(pkgmgr-info)
 
 %description
 Privacy setting ui gadget
@@ -47,8 +51,9 @@ export FFLAGS="$FFLAGS -DTIZEN_EMULATOR_MODE"
 %endif
 
 %{!?build_type:%define build_type "Release"}
-%cmake . -DCMAKE_INSTALL_PREFIX=%TZ_SYS_RO_UG \
+%cmake . -DCMAKE_INSTALL_PREFIX=%PREFIX \
         -DTZ_SYS_RO_PACKAGES=%TZ_SYS_RO_PACKAGES \
+		-DTZ_SYS_RO_APP=%TZ_SYS_RO_APP \
         -DCMAKE_BUILD_TYPE=%{build_type} \
         -DVERSION=%version
 
@@ -57,7 +62,11 @@ make %{?_smp_mflags}
 %install
 %make_install
 
-%post -p /sbin/ldconfig
+%post
+/sbin/ldconfig
+# Only for testing -> Fllowing single line must be removed
+cyad -s -k MANIFESTS -c User::App::org.tizen.privacy-setting -u 5001 -p http://tizen.org/privilege/notexist -t ALLOW
+echo "cyad done"
 
 %postun -p /sbin/ldconfig
 
@@ -65,6 +74,7 @@ make %{?_smp_mflags}
 %defattr(-,root,root,-)
 %manifest %name.manifest
 %license LICENSE
-%TZ_SYS_RO_PACKAGES/%name.xml
-%TZ_SYS_RO_UG/lib/libug-setting-privacy-efl.so*
+%{TZ_SYS_RO_PACKAGES}/%name.xml
+%{TZ_SYS_RO_APP}/%{name}/bin/
+#%{PREFIX}/*
 #%TZ_SYS_RO_UG/res/locale/*

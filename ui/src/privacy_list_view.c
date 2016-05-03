@@ -23,18 +23,8 @@
 #include <efl_extension.h>
 
 #include "common_utils.h"
-#include "privacy_setting_ug.h"
+#include "privacy_setting.h"
 #include "privacy_view.h"
-
-Eina_Bool quit_cb(void *data, Elm_Object_Item *it)
-{
-	struct ug_data_s* ugd = (struct ug_data_s*)data;
-	log_if(!ugd, 1, "ugd is null");
-
-	ug_destroy_me(ugd->ug);
-	ugd->ug = NULL;
-	return EINA_FALSE;
-}
 
 static char* gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
@@ -60,16 +50,18 @@ static void privacy_selected_cb(void *data, Evas_Object *obj, void *event_info)
 	/* Unhighlight selected item */
 	elm_genlist_item_selected_set(ei, EINA_FALSE);
 
-	struct ug_data_s *ugd = (struct ug_data_s *)data;
-	return_if(ugd == NULL, , , "ugd is null");
+	struct app_data_s *ad = (struct app_data_s *)data;
+	return_if(ad == NULL, , , "ad is null");
 
-	create_privacy_package_list_view(ugd, selected_id);
+	ad->privacy = (char*)selected_id->title;
+
+	create_privacy_package_list_view(ad, selected_id);
 }
 
 /*Privacy List*/
-void create_privacy_list_view(struct ug_data_s *ugd)
+void create_privacy_list_view(struct app_data_s *ad)
 {
-	Evas_Object *genlist = common_genlist_add(ugd->nf);
+	Evas_Object *genlist = common_genlist_add(ad->nf);
 
 	evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 	evas_object_size_hint_align_set(genlist, EVAS_HINT_FILL, EVAS_HINT_FILL);
@@ -80,19 +72,19 @@ void create_privacy_list_view(struct ug_data_s *ugd)
 	itc->func.del = gl_del_cb;
 	Elm_Object_Item *it = NULL;
 	int i = 0;
-	for (i = 0; i < (int)g_list_length(ugd->privacy_list); ++i) {
+	for (i = 0; i < (int)g_list_length(ad->privacy_list); ++i) {
 		item_data_s *id = calloc(sizeof(item_data_s), 1);
 		id->index = i;
-		id->title = (char*)g_list_nth_data(ugd->privacy_list, i);
-		it = elm_genlist_item_append(genlist, itc, id, NULL, ELM_GENLIST_ITEM_NONE, privacy_selected_cb, ugd);
+		id->title = (char*)g_list_nth_data(ad->privacy_list, i);
+		it = elm_genlist_item_append(genlist, itc, id, NULL, ELM_GENLIST_ITEM_NONE, privacy_selected_cb, ad);
 		log_if(it == NULL, 1, "Error in elm_genlist_item_append");
 	}
 	elm_genlist_item_class_free(itc);
 	evas_object_show(genlist);
 
 	/* Change "Privacy Setting" to proper DID : use dgettext() */
-	Elm_Object_Item *nf_it = elm_naviframe_item_push(ugd->nf, "Privacy Setting", common_back_btn_add(ugd), NULL, genlist, NULL);
+	Elm_Object_Item *nf_it = elm_naviframe_item_push(ad->nf, "Privacy Setting", common_back_btn_add(ad), NULL, genlist, NULL);
+
 	elm_object_item_domain_text_translatable_set(nf_it, PACKAGE, EINA_TRUE);
-	elm_naviframe_item_pop_cb_set(nf_it, quit_cb, ugd);
 }
 

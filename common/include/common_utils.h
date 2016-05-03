@@ -20,18 +20,18 @@
  * @brief
  */
 
-#ifndef __UG_SETTING_PRIVACY_COMMON_UTILS_H_
-#define __UG_SETTING_PRIVACY_COMMON_UTILS_H_
+#ifndef __UI_PRIVACY_SETTING_COMMON_UTILS_H_
+#define __UI_PRIVACY_SETTING_COMMON_UTILS_H_
 
 #include <Elementary.h>
 #include <dlog.h>
 
-#include "privacy_setting_ug.h"
+#include "privacy_setting.h"
 
 #ifdef LOG_TAG
 #undef LOG_TAG
 #endif
-#define LOG_TAG "UG_PRIVACY_SETTING"
+#define LOG_TAG "UI_PRIVACY_SETTING"
 
 #ifdef _cplusplus
 extern "C" {
@@ -62,10 +62,10 @@ extern "C" {
 
 
 Evas_Object *common_genlist_add(Evas_Object *parent);
-Evas_Object *common_back_btn_add(struct ug_data_s *ugd);
+Evas_Object *common_back_btn_add(struct app_data_s *ad);
 
 #ifdef _cplusplus
 }
 #endif
 
-#endif /* __UG_SETTING_PRIVACY_COMMON_UTILS_H_ */
+#endif /* __UI_PRIVACY_SETTING_COMMON_UTILS_H_ */

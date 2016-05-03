@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://tizen.org/ns/packages" package="org.tizen.privacy-setting" api-version="3.0" version="0.1">
+	<ui-application appid="org.tizen.privacy-setting" exec="/usr/apps/org.tizen.privacy-setting/bin/org.tizen.privacy-setting" multiple="false" nodisplay="true" taskmanager="false" type="capp">
+		<label>Setting privacy</label>
+	</ui-application>
+	<privileges>
+		<privilege>http://tizen.org/privilege/systemsettings.admin</privilege>
+	</privileges>
+</manifest>

@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns="http://tizen.org/ns/packages" package="ug-setting-privacy-efl" api-version="3.0" version="0.1" install-location="internal-only">
-        <label>ug-setting-privacy-efl ug</label>
-        <description>Privacy Setting UI</description>
-        <ui-application appid="setting-privacy-efl" exec="/usr/apps/ug-setting-privacy-efl/bin/setting-privacy-efl" nodisplay="true" ui-gadget="true" hw-acceleration="use-GL" multiple="false" type="capp" taskmanage="false">
-                <label>Setting privacy</label>
-       </ui-application>
-</manifest>

@@ -27,14 +27,25 @@
 #include <glib.h>
 #include <app.h>
 
-#include "privacy_setting_ug.h"
+#include "privacy_setting.h"
+
+typedef struct {
+	char* pkgid;
+	GList* applist;
+	GList* privlist;
+	bool change; /* toggle */
+	bool status; /* original status */
+} pkg_data_s;
 
 typedef struct item_data {
 	int index;
 	char *title;
+	char *pkgid;
 	bool status;
 } item_data_s;
 
-void create_privacy_package_list_view(struct ug_data_s *ugd, item_data_s *selected_id);
+void create_privacy_package_list_view(struct app_data_s *ad, item_data_s *selected_id);
 
-void create_privacy_list_view(struct ug_data_s *ugd);
+void create_privacy_list_view(struct app_data_s *ad);
+
+void create_privacy_menu_view(struct app_data_s *ad);
