@@ -24,6 +24,9 @@
 #define __UG_SETTING_PRIVACY_COMMON_UTILS_H_
 
 #include <Elementary.h>
+#include <efl_extension.h>
+#include <privilege_info.h>
+#include <glib.h>
 #include <dlog.h>
 
 #include "privacy_setting_ug.h"
@@ -62,7 +65,7 @@ extern "C" {
 
 
 Evas_Object *common_genlist_add(Evas_Object *parent);
-Evas_Object *common_back_btn_add(struct ug_data_s *ugd);
+Evas_Object *common_back_btn_add(struct app_data_s *ad);
 
 #ifdef _cplusplus
 }
