@@ -1,6 +1,6 @@
 SET(pkg_name "ug-setting-privacy-efl")
 
-pkg_check_modules(${pkg_name} REQUIRED glib-2.0 ui-gadget-1 evas elementary edje eina efl-extension security-privilege-manager icu-i18n dlog)
+pkg_check_modules(${pkg_name} REQUIRED glib-2.0 ui-gadget-1 evas elementary edje eina efl-extension security-privilege-manager icu-i18n dlog security-manager pkgmgr-info)
 
 SET(SRCS
 	${CMAKE_SOURCE_DIR}/common/src/common_utils.c

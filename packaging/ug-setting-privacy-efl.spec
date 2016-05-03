@@ -23,6 +23,8 @@ BuildRequires: pkgconfig(ui-gadget-1)
 BuildRequires: pkgconfig(icu-i18n)
 BuildRequires: pkgconfig(libtzplatform-config)
 BuildRequires: pkgconfig(security-privilege-manager)
+BuildRequires: pkgconfig(security-manager)
+BuildRequires: pkgconfig(pkgmgr-info)
 
 %description
 Privacy setting ui gadget

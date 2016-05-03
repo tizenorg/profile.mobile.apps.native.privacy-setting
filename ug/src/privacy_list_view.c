@@ -29,7 +29,7 @@
 Eina_Bool quit_cb(void *data, Elm_Object_Item *it)
 {
 	struct ug_data_s* ugd = (struct ug_data_s*)data;
-	log_if(!ugd, 1, "ugd is null");
+	return_if(!ugd, , EINA_FALSE, "ugd is null");
 
 	ug_destroy_me(ugd->ug);
 	ugd->ug = NULL;
@@ -62,6 +62,8 @@ static void privacy_selected_cb(void *data, Evas_Object *obj, void *event_info)
 
 	struct ug_data_s *ugd = (struct ug_data_s *)data;
 	return_if(ugd == NULL, , , "ugd is null");
+
+	ugd->privacy = (char*)selected_id->title;
 
 	create_privacy_package_list_view(ugd, selected_id);
 }
