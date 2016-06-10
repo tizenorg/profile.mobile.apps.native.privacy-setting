@@ -22,6 +22,7 @@
 
 #ifndef __UI_PRIVACY_SETTING_H__
 #define __UI_PRIVACY_SETTING_H__
+
 #include <Elementary.h>
 #include <ui-gadget.h>
 #include <ui-gadget-module.h>
@@ -29,7 +30,7 @@
 #include <app.h>
 
 #define PRIVACY_MENU_SETTING "Privacy Setting"
-#define PRIVACY_MENU_GUARD "Privacy Guard"
+#define PRIVACY_MENU_GUARD_SETTING "Privacy Guard Setting"
 
 struct app_data_s {
 	Evas_Object *parent_layout;

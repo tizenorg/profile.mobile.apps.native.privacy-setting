@@ -44,8 +44,28 @@ typedef struct item_data {
 	bool status;
 } item_data_s;
 
+typedef struct {
+	char* pkg_id;
+	int count;
+	int monitor_policy;
+} pg_data_s;
+
+typedef struct {
+	int index;
+	char *title;
+	uid_t user_id;
+	char *pkg_id;
+	char *privacy_id;
+	bool status;
+} pg_item_data_s;
+
 void create_privacy_package_list_view(struct app_data_s *ad, item_data_s *selected_id);
 
 void create_privacy_list_view(struct app_data_s *ad);
 
 void create_privacy_menu_view(struct app_data_s *ad);
+
+void create_privacy_guard_list_view(struct app_data_s *ad);
+
+void create_privacy_guard_package_list_view(struct app_data_s *ad);
+

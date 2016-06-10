@@ -27,6 +27,7 @@ BuildRequires: pkgconfig(libtzplatform-config)
 BuildRequires: pkgconfig(security-privilege-manager)
 BuildRequires: pkgconfig(security-manager)
 BuildRequires: pkgconfig(pkgmgr-info)
+BuildRequires: pkgconfig(privacy-guard-client)
 
 %description
 Privacy setting ui gadget

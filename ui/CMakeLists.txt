@@ -1,7 +1,7 @@
 INCLUDE(FindPkgConfig)
 SET(pkg_name "org.tizen.privacy-setting")
 
-pkg_check_modules(${pkg_name} REQUIRED glib-2.0 ui-gadget-1 evas elementary edje eina efl-extension security-privilege-manager icu-i18n dlog security-manager pkgmgr-info)
+pkg_check_modules(${pkg_name} REQUIRED glib-2.0 ui-gadget-1 evas elementary edje eina efl-extension security-privilege-manager icu-i18n dlog security-manager pkgmgr-info privacy-guard-client)
 
 SET(SRCS
 	${CMAKE_SOURCE_DIR}/common/src/common_utils.c
@@ -9,6 +9,8 @@ SET(SRCS
 	src/privacy_menu_view.c
 	src/privacy_list_view.c
 	src/privacy_package_list_view.c
+	src/privacy_guard_list_view.c
+	src/privacy_guard_package_list_view.c
 )
 
 FOREACH(flag ${${pkg_name}_CFLAGS})
