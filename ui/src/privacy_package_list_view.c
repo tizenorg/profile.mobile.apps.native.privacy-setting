@@ -25,6 +25,7 @@
 #include <privilege_info.h>
 #include <glib.h>
 #include <pkgmgr-info.h>
+#include <tzplatform_config.h>
 
 #include "common_utils.h"
 #include "privacy_setting.h"
@@ -38,7 +39,9 @@ int change_cnt;
 Evas_Object *save_btn;
 bool first;
 
+#define DEFAULT_ICON_PATH _TZ_SYS_RO_APP"/org.tizen.privacy-setting/res/icon/default.png"
 #define UIDMAXLEN 10
+#define GLOBAL_UID tzplatform_getuid(TZ_SYS_GLOBALAPP_USER)
 
 static void gl_del_cb(void *data, Evas_Object *obj)
 {
@@ -106,7 +109,11 @@ static void __get_package_privacy_status(pkg_data_s* pkg_data, char* privilege_n
 {
 	GList* l;
 	char uid[UIDMAXLEN];
-	snprintf(uid, UIDMAXLEN, "%d", getuid());
+	if (pkg_data->is_global)
+		snprintf(uid, UIDMAXLEN, "%d", GLOBAL_UID);
+	else
+		snprintf(uid, UIDMAXLEN, "%d", getuid());
+
 	for (l = pkg_data->applist; l != NULL; l = l->next) {
 		char* appid = (char*)l->data;
 
@@ -118,8 +125,10 @@ static void __get_package_privacy_status(pkg_data_s* pkg_data, char* privilege_n
 		log_if(p_filter == NULL, 1, "security_manager_policy_entry_new failed failed. creation of new policy entry did not allocate memory");
 		ret = security_manager_policy_entry_set_application(p_filter, appid);
 		log_if(ret != SECURITY_MANAGER_SUCCESS, 1, "security_manager_policy_entry_set_application failed. ret = %d", ret);
+
+		/* TBD: Remove set user part becuase there's no notion of global app's policy changes. User update their own app's policy only.
 		ret = security_manager_policy_entry_set_user(p_filter, uid);
-		log_if(ret != SECURITY_MANAGER_SUCCESS, 1, "security_manager_policy_entry_set_user failed. ret = %d", ret);
+		log_if(ret != SECURITY_MANAGER_SUCCESS, 1, "security_manager_policy_entry_set_user failed. ret = %d", ret); */
 		security_manager_policy_entry_set_privilege(p_filter, privilege_name);
 		log_if(ret != SECURITY_MANAGER_SUCCESS, 1, "security_manager_policy_entry_set_privilege failed. ret = %d", ret);
 
@@ -127,7 +136,7 @@ static void __get_package_privacy_status(pkg_data_s* pkg_data, char* privilege_n
 		policy_entry **pp_policy = NULL;
 		size_t pp_policy_size = 0;
 		ret = security_manager_get_policy(p_filter, &pp_policy, &pp_policy_size);
-		log_if(ret != SECURITY_MANAGER_SUCCESS, 1, "security_manager_get_policy failed. ret = %d", ret);
+		log_if(ret != SECURITY_MANAGER_SUCCESS || pp_policy_size <= 0, 1, "security_manager_get_policy failed. ret = %d, pp_policy_size = %d", ret, pp_policy_size);
 
 		/* Get level from policy */
 		unsigned int i = 0;
@@ -165,11 +174,23 @@ static Eina_Bool get_package_privacy_status(char* package)
 	return status;
 }
 
+static Evas_Object* create_icon(Evas_Object *parent, Evas_Coord w, Evas_Coord h, char* icon_path)
+{
+	Evas_Object *icon;
+	icon = elm_image_add(parent);
+	elm_image_file_set(icon, icon_path, NULL);
+	evas_object_size_hint_min_set(icon, ELM_SCALE_SIZE(w), ELM_SCALE_SIZE(h));
+	return icon;
+}
+
 static Evas_Object* gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
 {
 	Evas_Object *check;
 	item_data_s *id = (item_data_s*)data;
 	Eina_Bool status = id->status;
+
+	if (!strcmp("elm.swallow.icon", part))
+		return create_icon(obj, 70, 70, id->icon);
 
 	if (strcmp(part, "elm.swallow.end"))
 		return NULL;
@@ -187,13 +208,8 @@ static Evas_Object* gl_content_get_cb(void *data, Evas_Object *obj, const char *
 
 	return check;
 }
-
 static void _save_btn_clicked_cb(void *user_data, Evas_Object *obj, void *event_info)
 {
-
-	char uid[UIDMAXLEN];
-	snprintf(uid, UIDMAXLEN, "%d", getuid());
-
 	/* Send policy change request to security-manager */
 	GList* l;
 	GList* ll;
@@ -203,6 +219,11 @@ static void _save_btn_clicked_cb(void *user_data, Evas_Object *obj, void *event_
 		pkg_data_s* pkg_data = (pkg_data_s*)l->data;
 		char* pkgid = (char*)pkg_data->pkgid;
 		if (pkg_data->change) {
+			char uid[UIDMAXLEN];
+			if (pkg_data->is_global)
+				snprintf(uid, UIDMAXLEN, "%d", GLOBAL_UID);
+			else
+				snprintf(uid, UIDMAXLEN, "%d", getuid());
 			char* level;
 			if (pkg_data->status) {
 				level = "Deny";
@@ -212,7 +233,7 @@ static void _save_btn_clicked_cb(void *user_data, Evas_Object *obj, void *event_
 				pkg_data->status = true;
 			}
 
-			LOGD("%s will be changed to %s", pkgid, level);
+			LOGD("uid: %s, %s will be changed to %s", uid, pkgid, level);
 
 			int priv_num = g_list_length(pkg_data->privlist);
 			int app_num = g_list_length(pkg_data->applist);
@@ -240,8 +261,9 @@ static void _save_btn_clicked_cb(void *user_data, Evas_Object *obj, void *event_
 					log_if(ret != SECURITY_MANAGER_SUCCESS, 1, "security_manager_policy_entry_set_application failed. ret = %d", ret);
 					ret = security_manager_policy_entry_set_privilege(entry[entry_index], privilege_name);
 					log_if(ret != SECURITY_MANAGER_SUCCESS, 1, "security_manager_policy_entry_set_privilege failed. ret = %d", ret);
+					/* TBD: Remove set user part becuase there's no notion of global app's policy changes. User update their own app's policy only.
 					ret = security_manager_policy_entry_set_user(entry[entry_index], uid);
-					log_if(ret != SECURITY_MANAGER_SUCCESS, 1, "security_manager_policy_entry_set_user failed. ret = %d", ret);
+					log_if(ret != SECURITY_MANAGER_SUCCESS, 1, "security_manager_policy_entry_set_user failed. ret = %d", ret); */
 					ret = security_manager_policy_entry_set_level(entry[entry_index], level);
 					log_if(ret != SECURITY_MANAGER_SUCCESS, 1, "security_manager_policy_entry_set_level failed. ret = %d", ret);
 
@@ -322,6 +344,27 @@ static int pkg_list_cb(pkgmgrinfo_pkginfo_h filter_handle, void *user_data)
 	return_if(ret != PMINFO_R_OK, , -1, "pkgmgrinfo_pkginfo_get_pkginfo failed");
 	ret = pkgmgrinfo_appinfo_get_list(pkg_handle, PMINFO_ALL_APP, pkg_app_list_cb, pkg_data);
 	return_if(ret != PMINFO_R_OK, pkgmgrinfo_pkginfo_destroy_pkginfo(pkg_handle), -1, "pkgmgrinfo_appinfo_get_list failed");
+
+	/* See if the package is global. TBD: If notion for handling of global app is required. */
+	pkg_data->is_global = false;
+	ret = pkgmgrinfo_pkginfo_is_global(pkg_handle, &pkg_data->is_global);
+	return_if(ret != PMINFO_R_OK, pkgmgrinfo_pkginfo_destroy_pkginfo(pkg_handle), -1, "pkgmgrinfo_pkginfo_is_global failed");
+
+	/* Get package label */
+	char* label = NULL;
+	ret = pkgmgrinfo_pkginfo_get_label(pkg_handle, &label);
+	return_if(ret != PMINFO_R_OK, pkgmgrinfo_pkginfo_destroy_pkginfo(pkg_handle), -1, "pkgmgrinfo_pkginfo_get_label failed");
+	pkg_data->label = strdup(label);
+
+	/* Get package icon path */
+	char* icon = NULL;
+	ret = pkgmgrinfo_pkginfo_get_icon(pkg_handle, &icon);
+	return_if(ret != PMINFO_R_OK, pkgmgrinfo_pkginfo_destroy_pkginfo(pkg_handle), -1, "pkgmgrinfo_pkginfo_get_icon failed");
+	if (EINA_TRUE == ecore_file_exists(icon))
+		pkg_data->icon = strdup(icon);
+	else
+		pkg_data->icon = strdup(DEFAULT_ICON_PATH);
+
 	pkgmgrinfo_pkginfo_destroy_pkginfo(pkg_handle);
 
 	/* Get package privacy status */
@@ -364,7 +407,7 @@ static int get_uniq_pkg_list_by_privacy(const char* privacy)
 	/* To check : each privacy related package's app, privilege info
 	for (l = pkg_data_list; l != NULL; l = l->next) {
 		pkg_data_s* temp = (pkg_data_s*)l->data;
-		LOGD(" * PACKAGE ID : %s", temp->pkgid);
+		LOGD(" * PACKAGE ID : %s LABEL: %s is global? %d", temp->pkgid, temp->label, temp->is_global);
 		GList* ll;
 		LOGD(" * APP ID");
 		for (ll = temp->applist; ll != NULL; ll = ll->next) {
@@ -376,7 +419,7 @@ static int get_uniq_pkg_list_by_privacy(const char* privacy)
 			char* temp_privname = (char*)ll->data;
 			LOGD(" - %s", temp_privname);
 		}
-	}*/
+	} */
 
 	return ret;
 }
@@ -414,16 +457,18 @@ void create_privacy_package_list_view(struct app_data_s* ad, item_data_s *select
 	GList* l;
 	int i = 0;
 	Elm_Object_Item *it = NULL;
-	for (l = pkg_list; l != NULL; l = l->next) {
+	for (l = pkg_data_list; l != NULL; l = l->next) {
 		item_data_s *id = calloc(sizeof(item_data_s), 1);
 		id->index = i++;
 		char temp[256];
-		char* pkg_name = (char*)l->data;
-		id->pkgid = strdup(pkg_name);
-		snprintf(temp, sizeof(temp), "%d : %s", i, pkg_name);
-		id->title = strdup(temp);
+		pkg_data_s* pkg_data = (pkg_data_s*)l->data;
+		id->pkgid = strdup(pkg_data->pkgid);
+		snprintf(temp, sizeof(temp), "%d : %s", i, pkg_data->pkgid);
+		id->title = pkg_data->label;
+		id->icon = pkg_data->icon;
 		/* Get privacy status of given package */
-		id->status = get_package_privacy_status(pkg_name);
+		id->status = get_package_privacy_status(pkg_data->pkgid);
+		LOGD("status = %d", id->status);
 		it = elm_genlist_item_append(genlist, itc, id, NULL, ELM_GENLIST_ITEM_NONE, privacy_package_selected_cb, id);
 		log_if(it == NULL, 1, "Error in elm_genlist_item_append");
 	}
@@ -432,7 +477,7 @@ void create_privacy_package_list_view(struct app_data_s* ad, item_data_s *select
 
 	/* TBD: change nf_it_title to proper DID : use dgettext() */
 	char nf_it_title[256];
-	snprintf(nf_it_title, sizeof(nf_it_title), "%s Packages", ad->privacy);
+	snprintf(nf_it_title, sizeof(nf_it_title), "%s", ad->privacy);
 
 	/* Push naviframe item */
 	Elm_Object_Item *nf_it = elm_naviframe_item_push(ad->nf, nf_it_title, common_back_btn_add(ad), NULL, genlist, NULL);

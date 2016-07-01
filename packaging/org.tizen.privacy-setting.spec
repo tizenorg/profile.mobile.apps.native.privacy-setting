@@ -67,6 +67,7 @@ make %{?_smp_mflags}
 /sbin/ldconfig
 # Only for testing -> Fllowing single line must be removed
 cyad -s -k MANIFESTS -c User::App::org.tizen.privacy-setting -u 5001 -p http://tizen.org/privilege/notexist -t ALLOW
+cyad -s -k MANIFESTS -c User::App::org.tizen.privacy-setting -u 5001 -p http://tizen.org/privilege/internal/usermanagement -t ALLOW
 echo "cyad done"
 
 %postun -p /sbin/ldconfig
@@ -77,5 +78,6 @@ echo "cyad done"
 %license LICENSE
 %{TZ_SYS_RO_PACKAGES}/%name.xml
 %{TZ_SYS_RO_APP}/%{name}/bin/
+%{TZ_SYS_RO_APP}/%{name}/res/icon/
 #%{PREFIX}/*
 #%TZ_SYS_RO_UG/res/locale/*

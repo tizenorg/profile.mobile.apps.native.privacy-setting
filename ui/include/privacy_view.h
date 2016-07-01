@@ -31,16 +31,20 @@
 
 typedef struct {
 	char* pkgid;
+	char* label;
+	char* icon;
 	GList* applist;
 	GList* privlist;
 	bool change; /* toggle */
 	bool status; /* original status */
+	bool is_global;
 } pkg_data_s;
 
 typedef struct item_data {
 	int index;
 	char *title;
 	char *pkgid;
+	char *icon;
 	bool status;
 } item_data_s;
 
