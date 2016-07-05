@@ -82,7 +82,7 @@ void create_privacy_guard_list_view(struct app_data_s *ad)
 	evas_object_show(genlist);
 
 	/* Change "Privacy Setting" to proper DID : use dgettext() */
-	Elm_Object_Item *nf_it = elm_naviframe_item_push(ad->nf, "Privacy Guard Setting", common_back_btn_add(ad), NULL, genlist, NULL);
+	Elm_Object_Item *nf_it = elm_naviframe_item_push(ad->nf, PRIVACY_MENU_GUARD_SETTING, common_back_btn_add(ad), NULL, genlist, NULL);
 
 	elm_object_item_domain_text_translatable_set(nf_it, PACKAGE, EINA_TRUE);
 }
