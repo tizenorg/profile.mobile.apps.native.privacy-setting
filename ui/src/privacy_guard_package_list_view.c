@@ -147,13 +147,17 @@ void create_privacy_guard_package_list_view(struct app_data_s* ad)
 	// no content in the genlist
 	if (!pg_data_list) {
 		itc->item_style = "default";
+		//itc->item_style = "type1";
 		itc->func.text_get = _gl_text_get_cb;
 		itc->func.del = _gl_del_cb;
 
 		Elm_Object_Item *it = NULL;
+		char temp[256] = {'\0',};
 		pg_item_data_s *item = calloc(sizeof(pg_item_data_s), 1);
 		item->index = 0;
-		item->label = strdup("<font color=#A9A9A9FF>No Package</font>");
+		//item->label = strdup("No apps");
+		snprintf(temp, sizeof(temp), "<font color=#A9A9A9FF>No apps using %s privacy.</font>", ad->privacy);
+		item->label = strdup(temp);
 
 		// append to the genlist
 		it = elm_genlist_item_append(genlist, itc, item, NULL, ELM_GENLIST_ITEM_NONE, _privacy_package_selected_cb, item);
