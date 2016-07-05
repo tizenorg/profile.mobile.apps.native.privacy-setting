@@ -51,15 +51,6 @@ static void gl_del_cb(void *data, Evas_Object *obj)
 	free(id);
 }
 
-static void privacy_package_selected_cb(void *data, Evas_Object *obj, void *event_info)
-{
-	Elm_Object_Item *ei = event_info;
-	/* Unhighlight selected item */
-	elm_genlist_item_selected_set(ei, EINA_FALSE);
-	/* TBD? Add package's privacy info.
-	   For example, package's selected privacy related privilege list.
-	   Or remove. */
-}
 static char* gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
 	item_data_s *id = data;
@@ -69,7 +60,6 @@ static char* gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 
 static void privacy_package_check_changed_cb(void *data, Evas_Object *obj, void *event_info)
 {
-	struct app_data_s* ad = (struct app_data_s*)data;
 	item_data_s *id = (item_data_s*)data;
 	if (id->status)
 		id->status = EINA_FALSE;
@@ -105,6 +95,24 @@ static void privacy_package_check_changed_cb(void *data, Evas_Object *obj, void 
 		LOGD("save_btn diabled");
 	}
 }
+
+static void privacy_package_selected_cb(void *data, Evas_Object *obj, void *event_info)
+{
+    Elm_Object_Item *ei = event_info;
+    /* Unhighlight selected item */
+    elm_genlist_item_selected_set(ei, EINA_FALSE);
+
+	Eina_Bool status;
+	item_data_s *id = (item_data_s*)data;
+    if (id->status)
+        status = EINA_FALSE;
+    else
+        status = EINA_TRUE;
+	Evas_Object *check = elm_object_item_part_content_get(ei, "elm.swallow.end");
+	elm_check_state_set(check, status);
+	evas_object_smart_callback_call(check, "changed", data);
+}
+
 static void __get_package_privacy_status(pkg_data_s* pkg_data, char* privilege_name)
 {
 	GList* l;
