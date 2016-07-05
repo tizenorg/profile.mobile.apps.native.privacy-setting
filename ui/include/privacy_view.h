@@ -56,10 +56,12 @@ typedef struct {
 
 typedef struct {
 	int index;
-	char *title;
+	char *label;
+	char *description;
 	uid_t user_id;
 	char *pkg_id;
 	char *privacy_id;
+	char *icon;
 	bool status;
 } pg_item_data_s;
 
