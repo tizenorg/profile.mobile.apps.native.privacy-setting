@@ -49,20 +49,6 @@ static void _privacy_package_selected_cb(void *data, Evas_Object *obj, void *eve
 	/* Unhighlight selected item */
 	elm_genlist_item_selected_set(ei, EINA_FALSE);
 }
-static char* _gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
-{
-	pg_item_data_s *id = data;
-
-	if (!strcmp(part, "elm.text")) {
-		return strdup(id->label);
-	} else if (!strcmp(part, "elm.text.sub")) {
-		return strdup(id->description);
-	} else {
-		return NULL;
-	}
-
-	return "FAIL";
-}
 
 static void _privacy_package_check_changed_cb(void *data, Evas_Object *obj, void *event_info)
 {
@@ -76,9 +62,27 @@ static void _privacy_package_check_changed_cb(void *data, Evas_Object *obj, void
 	LOGD("changed policy: [%d]", id->status);
 }
 
+static char* _gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
+{
+	pg_item_data_s *id = data;
+
+	if (!strcmp(part, "elm.text")) {
+		return strdup(id->label);
+	}
+
+	if (!strcmp(part, "elm.text.sub") && id->index != 0) {
+		return strdup(id->description);
+	}
+
+	return NULL;
+}
+
 static Evas_Object* _gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
 {
 	pg_item_data_s *id = (pg_item_data_s*)data;
+
+	if (id->index == 0)
+		return NULL;
 
 	if (!strcmp("elm.swallow.icon", part)) {
 		Evas_Object *icon;
@@ -145,12 +149,13 @@ void create_privacy_guard_package_list_view(struct app_data_s* ad)
 	int res = privacy_guard_client_foreach_package_info_by_privacy_id(user_id, ad->privacy, _privacy_package_info_cb, NULL);
 	log_if(res != PRIV_GUARD_ERROR_SUCCESS, 1, "privacy_guard_client_foreach_package_info_by_privacy_id() is failed. [%d]", res);
 
+	itc->item_style = "type1";
+	itc->func.content_get = _gl_content_get_cb;
+	itc->func.text_get = _gl_text_get_cb;
+	itc->func.del = _gl_del_cb;
+		
 	// no content in the genlist
 	if (!pg_data_list) {
-		itc->item_style = "default";
-		itc->func.text_get = _gl_text_get_cb;
-		itc->func.del = _gl_del_cb;
-
 		Elm_Object_Item *it = NULL;
 		char temp[256] = {'\0',};
 		pg_item_data_s *item = calloc(sizeof(pg_item_data_s), 1);
@@ -162,15 +167,19 @@ void create_privacy_guard_package_list_view(struct app_data_s* ad)
 		it = elm_genlist_item_append(genlist, itc, item, NULL, ELM_GENLIST_ITEM_NONE, _privacy_package_selected_cb, item);
 		log_if(it == NULL, 1, "Error in elm_genlist_item_append");
 	} else {
-		itc->item_style = "type1";
-		itc->func.content_get = _gl_content_get_cb;
-		itc->func.text_get = _gl_text_get_cb;
-		itc->func.del = _gl_del_cb;
+		Elm_Object_Item *it = NULL;
+		GList* l;
+		
+		/* Append guide text to the top of genlist */		
+		pg_item_data_s *description_item = calloc(sizeof(pg_item_data_s), 1);
+		description_item->index = 0;
+		char tmp[256] = {'\0',};
+		snprintf(tmp, sizeof(tmp), "<wrap=word><ellipsis=-1.0><font_size=30><color=#A9A9A9FF>The apps checked below record the number of privacy usages.</color></font_size></ellipsis></wrap>");
+		description_item->label = strdup(tmp);
+		it = elm_genlist_item_append(genlist, itc, description_item, NULL, ELM_GENLIST_ITEM_NONE, _privacy_package_selected_cb, description_item);
 
 		/* Append privacy related package as genlist item */
-		GList* l;
-		int i = 0;
-		Elm_Object_Item *it = NULL;
+		int i = 1;
 		for (l = pg_data_list; l != NULL; l = l->next) {
 			pg_item_data_s *item = calloc(sizeof(pg_item_data_s), 1);
 			pg_data_s* data = (pg_data_s*)l->data;
@@ -225,7 +234,7 @@ void create_privacy_guard_package_list_view(struct app_data_s* ad)
 					item->icon = strdup(icon);
 				}
 				else {
-					LOGD("The icon [%s] is not exist. So replace the icon to the default icon.", icon);
+					LOGD("The icon is not exist for %s. So replace it to the default icon.", label);
 					item->icon = strdup(DEFAULT_ICON_PATH);
 				}
 			}
