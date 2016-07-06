@@ -25,6 +25,7 @@
 #include "common_utils.h"
 #include "privacy_setting.h"
 #include "privacy_view.h"
+#include "privilege_info.h"
 
 static char* gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 {
@@ -53,9 +54,9 @@ static void privacy_selected_cb(void *data, Evas_Object *obj, void *event_info)
 	struct app_data_s *ad = (struct app_data_s *)data;
 	return_if(ad == NULL, , , "ad is null");
 
-	ad->privacy = (char*)selected_id->title;
+	ad->privacy = (char*)selected_id->privacy;
 
-	create_privacy_package_list_view(ad, selected_id);
+	create_privacy_package_list_view(ad);
 }
 
 /*Privacy List*/
@@ -75,7 +76,12 @@ void create_privacy_list_view(struct app_data_s *ad)
 	for (i = 0; i < (int)g_list_length(ad->privacy_list); ++i) {
 		item_data_s *id = calloc(sizeof(item_data_s), 1);
 		id->index = i;
-		id->title = (char*)g_list_nth_data(ad->privacy_list, i);
+		char* privacy_display = NULL;
+		id->privacy = strdup((char*)g_list_nth_data(ad->privacy_list, i));
+		LOGD("privacy = %s", id->privacy);
+		int ret = privilege_info_get_privacy_display(id->privacy, &privacy_display);
+		log_if(ret != PRVMGR_ERR_NONE, 1, "privacy_display = %s", privacy_display);
+		id->title = dgettext("privilege", privacy_display);
 		it = elm_genlist_item_append(genlist, itc, id, NULL, ELM_GENLIST_ITEM_NONE, privacy_selected_cb, ad);
 		log_if(it == NULL, 1, "Error in elm_genlist_item_append");
 	}

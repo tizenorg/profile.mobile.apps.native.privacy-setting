@@ -109,7 +109,8 @@ void create_privacy_menu_view(struct app_data_s *ad)
 	evas_object_show(genlist);
 
 	/* Change "Privacy & Safety" to proper DID : use dgettext() */
-	Elm_Object_Item *nf_it = elm_naviframe_item_push(ad->nf, "Privacy &amp; Safety", common_back_btn_add(ad), NULL, genlist, NULL);
+	char* title = dgettext("privacy-setting", "IDS_ST_HEADER_PRIVACY_AND_SAFETY_ABB");
+	Elm_Object_Item *nf_it = elm_naviframe_item_push(ad->nf, title, common_back_btn_add(ad), NULL, genlist, NULL);
 	elm_object_item_domain_text_translatable_set(nf_it, PACKAGE, EINA_TRUE);
 
 	elm_naviframe_item_pop_cb_set(nf_it, quit_cb, ad);

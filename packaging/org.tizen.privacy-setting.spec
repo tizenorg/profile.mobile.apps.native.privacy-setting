@@ -79,5 +79,5 @@ echo "cyad done"
 %{TZ_SYS_RO_PACKAGES}/%name.xml
 %{TZ_SYS_RO_APP}/%{name}/bin/
 %{TZ_SYS_RO_APP}/%{name}/res/icon/
-#%{PREFIX}/*
+%{PREFIX}/res/*
 #%TZ_SYS_RO_UG/res/locale/*

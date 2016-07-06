@@ -21,6 +21,7 @@
  */
 
 #include <efl_extension.h>
+#include <privilege_info.h>
 #include <glib.h>
 #include <pkgmgr-info.h>
 #include <tzplatform_config.h>
@@ -244,11 +245,12 @@ void create_privacy_guard_package_list_view(struct app_data_s* ad)
 	evas_object_show(genlist);
 
 	/* TODO: change nf_it_title to proper DID : use dgettext() */
-	char nf_it_title[256];
-	snprintf(nf_it_title, sizeof(nf_it_title), "%s", ad->privacy);
+	char* privacy_display = NULL;
+	int ret = privilege_info_get_privacy_display(ad->privacy, &privacy_display);
+    log_if(ret != PRVMGR_ERR_NONE, 1, "privacy_display = %s", privacy_display);
 
 	/* Push naviframe item */
-	Elm_Object_Item *nf_it = elm_naviframe_item_push(ad->nf, nf_it_title, common_back_btn_add(ad), NULL, genlist, NULL);
+	Elm_Object_Item *nf_it = elm_naviframe_item_push(ad->nf, dgettext("privilege", privacy_display), common_back_btn_add(ad), NULL, genlist, NULL);
 
 	elm_object_item_domain_text_translatable_set(nf_it, PACKAGE, EINA_TRUE);
 }

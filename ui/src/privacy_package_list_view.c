@@ -431,7 +431,7 @@ static int get_uniq_pkg_list_by_privacy(const char* privacy)
 
 	return ret;
 }
-void create_privacy_package_list_view(struct app_data_s* ad, item_data_s *selected_id)
+void create_privacy_package_list_view(struct app_data_s* ad)
 {
 	/* Add genlist */
 	Evas_Object *genlist = common_genlist_add(ad->nf);
@@ -484,11 +484,12 @@ void create_privacy_package_list_view(struct app_data_s* ad, item_data_s *select
 	evas_object_show(genlist);
 
 	/* TBD: change nf_it_title to proper DID : use dgettext() */
-	char nf_it_title[256];
-	snprintf(nf_it_title, sizeof(nf_it_title), "%s", ad->privacy);
+	char* privacy_display = NULL;
+	ret = privilege_info_get_privacy_display(ad->privacy, &privacy_display);
+    log_if(ret != PRVMGR_ERR_NONE, 1, "privacy_display = %s", privacy_display);
 
 	/* Push naviframe item */
-	Elm_Object_Item *nf_it = elm_naviframe_item_push(ad->nf, nf_it_title, common_back_btn_add(ad), NULL, genlist, NULL);
+	Elm_Object_Item *nf_it = elm_naviframe_item_push(ad->nf, dgettext("privilege", privacy_display), common_back_btn_add(ad), NULL, genlist, NULL);
 
 	/* Add button to save privacy package policy changes */
 	save_btn = elm_button_add(ad->nf);

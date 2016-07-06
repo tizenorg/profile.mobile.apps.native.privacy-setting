@@ -44,6 +44,7 @@ typedef struct item_data {
 	int index;
 	char *title;
 	char *pkgid;
+	char *privacy;
 	char *icon;
 	bool status;
 } item_data_s;
@@ -65,7 +66,7 @@ typedef struct {
 	bool status;
 } pg_item_data_s;
 
-void create_privacy_package_list_view(struct app_data_s *ad, item_data_s *selected_id);
+void create_privacy_package_list_view(struct app_data_s *ad);
 
 void create_privacy_list_view(struct app_data_s *ad);
 
