@@ -30,7 +30,7 @@
 #include <app.h>
 
 #define PRIVACY_MENU_SETTING "Privacy Setting"
-#define PRIVACY_MENU_GUARD_SETTING "Privacy Usage"
+#define PRIVACY_MENU_ACCESS "Privacy Access"
 
 struct app_data_s {
 	Evas_Object *parent_layout;

@@ -72,7 +72,7 @@ static void menu_selected_cb(void *data, Evas_Object *obj, void *event_info)
 
 	if (strstr(selected_id->title, PRIVACY_MENU_SETTING) != NULL) {
 		create_privacy_list_view(ad);
-	} else if (strstr(selected_id->title, PRIVACY_MENU_GUARD_SETTING) != NULL) {/* privacy guard */
+	} else if (strstr(selected_id->title, PRIVACY_MENU_ACCESS) != NULL) {/* privacy guard */
 		create_privacy_guard_list_view(ad);
 	} else {
 		LOGE("selected_id->title = %s, no matching menu", selected_id->title);
@@ -90,7 +90,7 @@ void create_privacy_menu_view(struct app_data_s *ad)
 	/* Set privacy menu list */
 	privacy_menu_list = NULL;
 	privacy_menu_list = g_list_append(privacy_menu_list, PRIVACY_MENU_SETTING);
-	privacy_menu_list = g_list_append(privacy_menu_list, PRIVACY_MENU_GUARD_SETTING);
+	privacy_menu_list = g_list_append(privacy_menu_list, PRIVACY_MENU_ACCESS);
 
 	Elm_Genlist_Item_Class *itc = elm_genlist_item_class_new();
 	itc->item_style = "default";

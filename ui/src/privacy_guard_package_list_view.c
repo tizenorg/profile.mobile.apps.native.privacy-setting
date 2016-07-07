@@ -174,7 +174,7 @@ void create_privacy_guard_package_list_view(struct app_data_s* ad)
 		pg_item_data_s *description_item = calloc(sizeof(pg_item_data_s), 1);
 		description_item->index = 0;
 		char tmp[256] = {'\0',};
-		snprintf(tmp, sizeof(tmp), "<wrap=word><ellipsis=-1.0><font_size=30><color=#A9A9A9FF>The apps checked below record the number of privacy usages.</color></font_size></ellipsis></wrap>");
+		snprintf(tmp, sizeof(tmp), "<wrap=word><ellipsis=-1.0><font_size=30><color=#A9A9A9FF>The recording of privacy access will be enabled for the selected apps.</color></font_size></ellipsis></wrap>");
 		description_item->label = strdup(tmp);
 		it = elm_genlist_item_append(genlist, itc, description_item, NULL, ELM_GENLIST_ITEM_NONE, _privacy_package_selected_cb, description_item);
 
