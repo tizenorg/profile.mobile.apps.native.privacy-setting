@@ -59,7 +59,7 @@ static void menu_selected_cb(void *data, Evas_Object *obj, void *event_info)
 	/* Get selected privacy */
 	Elm_Object_Item *ei = event_info;
 	item_data_s *selected_id = elm_object_item_data_get(ei);
-	LOGD("%s is selected, index = %d", selected_id->title, selected_id->index);
+	LOGD("%s is selected, index = %d", selected_id->menu, selected_id->index);
 
 	/* Unhighlight selected item */
 	elm_genlist_item_selected_set(ei, EINA_FALSE);
@@ -70,12 +70,12 @@ static void menu_selected_cb(void *data, Evas_Object *obj, void *event_info)
 	int ret = privilege_info_get_privacy_list(&(ad->privacy_list));
 	log_if(ret != PRVMGR_ERR_NONE, 1, "Failed to get privacy_list");
 
-	if (strstr(selected_id->title, PRIVACY_MENU_SETTING) != NULL) {
+	if (strstr(selected_id->menu, PRIVACY_MENU_SETTING) != NULL) {
 		create_privacy_list_view(ad);
-	} else if (strstr(selected_id->title, PRIVACY_MENU_ACCESS) != NULL) {/* privacy guard */
+	} else if (strstr(selected_id->menu, PRIVACY_MENU_ACCESS) != NULL) {/* privacy guard */
 		create_privacy_guard_list_view(ad);
 	} else {
-		LOGE("selected_id->title = %s, no matching menu", selected_id->title);
+		LOGE("selected_id->title = %s, no matching menu", selected_id->menu);
 	}
 }
 
@@ -101,7 +101,8 @@ void create_privacy_menu_view(struct app_data_s *ad)
 	for (i = 0; i < (int)g_list_length(privacy_menu_list); ++i) {
 		item_data_s *id = calloc(sizeof(item_data_s), 1);
 		id->index = i;
-		id->title = (char*)g_list_nth_data(privacy_menu_list, i);
+		id->menu = (char*)g_list_nth_data(privacy_menu_list, i);
+		id->title = strdup(dgettext("privacy-setting", id->menu));
 		it = elm_genlist_item_append(genlist, itc, id, NULL, ELM_GENLIST_ITEM_NONE, menu_selected_cb, ad);
 		log_if(it == NULL, 1, "Error in elm_genlist_item_append");
 	}

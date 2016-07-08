@@ -45,6 +45,7 @@ typedef struct item_data {
 	char *title;
 	char *pkgid;
 	char *privacy;
+	char *menu;
 	char *icon;
 	bool status;
 } item_data_s;

@@ -1,3 +1,6 @@
 msgid "IDS_ST_HEADER_PRIVACY_AND_SAFETY_ABB"
 msgstr "Privadesa i seguretat"
 
+msgid "IDS_CLD_OPT_TIMES_LC"
+msgstr "vegades"
+
