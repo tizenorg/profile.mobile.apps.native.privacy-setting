@@ -70,7 +70,11 @@ static char* _gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 		return strdup(id->label);
 	}
 
+#if 0	
 	if (!strcmp(part, "elm.text.sub") && id->index != 0) {
+# else 
+	if (!strcmp(part, "elm.text.sub")) {
+#endif
 		return strdup(id->description);
 	}
 
@@ -80,10 +84,10 @@ static char* _gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 static Evas_Object* _gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
 {
 	pg_item_data_s *id = (pg_item_data_s*)data;
-
+#if 0
 	if (id->index == 0)
 		return NULL;
-
+#endif
 	if (!strcmp("elm.swallow.icon", part)) {
 		Evas_Object *icon;
 		icon = elm_image_add(obj);
@@ -154,8 +158,11 @@ void create_privacy_guard_package_list_view(struct app_data_s* ad)
 	itc->func.text_get = _gl_text_get_cb;
 	itc->func.del = _gl_del_cb;
 
+#if 0
 	// no content in the genlist
 	if (!pg_data_list) {
+
+
 		Elm_Object_Item *it = NULL;
 		char temp[256] = {'\0',};
 		pg_item_data_s *item = calloc(sizeof(pg_item_data_s), 1);
@@ -166,10 +173,14 @@ void create_privacy_guard_package_list_view(struct app_data_s* ad)
 		// append to the genlist
 		it = elm_genlist_item_append(genlist, itc, item, NULL, ELM_GENLIST_ITEM_NONE, _privacy_package_selected_cb, item);
 		log_if(it == NULL, 1, "Error in elm_genlist_item_append");
+
 	} else {
+#endif
+
 		Elm_Object_Item *it = NULL;
 		GList* l;
 
+#if 0
 		/* Append guide text to the top of genlist */
 		pg_item_data_s *description_item = calloc(sizeof(pg_item_data_s), 1);
 		description_item->index = 0;
@@ -180,6 +191,9 @@ void create_privacy_guard_package_list_view(struct app_data_s* ad)
 
 		/* Append privacy related package as genlist item */
 		int i = 1;
+#else
+		int i = 0;
+#endif
 		for (l = pg_data_list; l != NULL; l = l->next) {
 			pg_item_data_s *item = calloc(sizeof(pg_item_data_s), 1);
 			pg_data_s* data = (pg_data_s*)l->data;
@@ -214,7 +228,8 @@ void create_privacy_guard_package_list_view(struct app_data_s* ad)
 			item->label = strdup(temp);
 
 			// description
-			snprintf(temp, sizeof(temp), "<font color=#3DB9CCFF>%d</font> time(s)", data->count);
+			//snprintf(temp, sizeof(temp), "<font color=#3DB9CCFF>%d</font> time(s)", data->count);
+			snprintf(temp, sizeof(temp), "<font color=#3DB9CCFF>%d</font> %s", data->count, dgettext("privacy-setting", "IDS_CLD_OPT_TIMES_LC"));
 			item->description = strdup(temp);
 
 			// user ID
@@ -248,7 +263,9 @@ void create_privacy_guard_package_list_view(struct app_data_s* ad)
 			it = elm_genlist_item_append(genlist, itc, item, NULL, ELM_GENLIST_ITEM_NONE, _privacy_package_selected_cb, item);
 			log_if(it == NULL, 1, "Error in elm_genlist_item_append");
 		}
+#if 0
 	}
+#endif
 
 	elm_genlist_item_class_free(itc);
 	evas_object_show(genlist);
