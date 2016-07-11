@@ -181,6 +181,7 @@ void create_privacy_guard_package_list_view(struct app_data_s* ad)
 		// append to the genlist
 		it = elm_genlist_item_append(genlist, itc, item, NULL, ELM_GENLIST_ITEM_NONE, _privacy_package_selected_cb, item);
 		log_if(it == NULL, 1, "Error in elm_genlist_item_append");
+		elm_genlist_item_select_mode_set(it, ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
 
 	} else {
 #endif

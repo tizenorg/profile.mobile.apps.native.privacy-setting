@@ -98,16 +98,16 @@ static void privacy_package_check_changed_cb(void *data, Evas_Object *obj, void 
 
 static void privacy_package_selected_cb(void *data, Evas_Object *obj, void *event_info)
 {
-    Elm_Object_Item *ei = event_info;
-    /* Unhighlight selected item */
-    elm_genlist_item_selected_set(ei, EINA_FALSE);
+	Elm_Object_Item *ei = event_info;
+	/* Unhighlight selected item */
+	elm_genlist_item_selected_set(ei, EINA_FALSE);
 
 	Eina_Bool status;
 	item_data_s *id = (item_data_s*)data;
-    if (id->status)
-        status = EINA_FALSE;
-    else
-        status = EINA_TRUE;
+	if (id->status)
+		status = EINA_FALSE;
+	else
+		status = EINA_TRUE;
 	Evas_Object *check = elm_object_item_part_content_get(ei, "elm.swallow.end");
 	elm_check_state_set(check, status);
 	evas_object_smart_callback_call(check, "changed", data);
@@ -195,6 +195,8 @@ static Evas_Object* gl_content_get_cb(void *data, Evas_Object *obj, const char *
 {
 	Evas_Object *check;
 	item_data_s *id = (item_data_s*)data;
+	if (id->icon == NULL)
+		return NULL;
 	Eina_Bool status = id->status;
 
 	if (!strcmp("elm.swallow.icon", part))
@@ -465,28 +467,46 @@ void create_privacy_package_list_view(struct app_data_s* ad)
 	GList* l;
 	int i = 0;
 	Elm_Object_Item *it = NULL;
-	for (l = pkg_data_list; l != NULL; l = l->next) {
+	if (!pkg_data_list) {
+		LOGD("No apps using %s", ad->privacy);
 		item_data_s *id = calloc(sizeof(item_data_s), 1);
 		id->index = i++;
+		char* privacy_display = NULL;
+		int ret = privilege_info_get_privacy_display(ad->privacy, &privacy_display);
+		log_if(ret != PRVMGR_ERR_NONE, 1, "privacy_display = %s", privacy_display);
 		char temp[256];
-		pkg_data_s* pkg_data = (pkg_data_s*)l->data;
-		id->pkgid = strdup(pkg_data->pkgid);
-		snprintf(temp, sizeof(temp), "%d : %s", i, pkg_data->pkgid);
-		id->title = pkg_data->label;
-		id->icon = pkg_data->icon;
-		/* Get privacy status of given package */
-		id->status = get_package_privacy_status(pkg_data->pkgid);
-		LOGD("status = %d", id->status);
-		it = elm_genlist_item_append(genlist, itc, id, NULL, ELM_GENLIST_ITEM_NONE, privacy_package_selected_cb, id);
+		snprintf(temp, sizeof(temp), "<font color=#A9A9A9FF>No apps using %s privacy.</font>", dgettext("privilege", privacy_display));
+		id->title = strdup(temp);
+
+		// append to the genlist
+		it = elm_genlist_item_append(genlist, itc, id, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
+		elm_genlist_item_select_mode_set(it, ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
 		log_if(it == NULL, 1, "Error in elm_genlist_item_append");
+	} else {
+		for (l = pkg_data_list; l != NULL; l = l->next) {
+			item_data_s *id = calloc(sizeof(item_data_s), 1);
+			id->index = i++;
+			char temp[256];
+			pkg_data_s* pkg_data = (pkg_data_s*)l->data;
+			id->pkgid = strdup(pkg_data->pkgid);
+			snprintf(temp, sizeof(temp), "%d : %s", i, pkg_data->pkgid);
+			id->title = pkg_data->label;
+			id->icon = pkg_data->icon;
+			/* Get privacy status of given package */
+			id->status = get_package_privacy_status(pkg_data->pkgid);
+			LOGD("status = %d", id->status);
+			it = elm_genlist_item_append(genlist, itc, id, NULL, ELM_GENLIST_ITEM_NONE, privacy_package_selected_cb, id);
+			log_if(it == NULL, 1, "Error in elm_genlist_item_append");
+		}
 	}
+
 	elm_genlist_item_class_free(itc);
 	evas_object_show(genlist);
 
 	/* TBD: change nf_it_title to proper DID : use dgettext() */
 	char* privacy_display = NULL;
 	ret = privilege_info_get_privacy_display(ad->privacy, &privacy_display);
-    log_if(ret != PRVMGR_ERR_NONE, 1, "privacy_display = %s", privacy_display);
+	log_if(ret != PRVMGR_ERR_NONE, 1, "privacy_display = %s", privacy_display);
 
 	/* Push naviframe item */
 	Elm_Object_Item *nf_it = elm_naviframe_item_push(ad->nf, dgettext("privilege", privacy_display), common_back_btn_add(ad), NULL, genlist, NULL);
