@@ -45,6 +45,14 @@ static void _gl_del_cb(void *data, Evas_Object *obj)
 static void _privacy_package_selected_cb(void *data, Evas_Object *obj, void *event_info)
 {
 	Elm_Object_Item *ei = event_info;
+	pg_item_data_s *id = (pg_item_data_s*)data;
+	Eina_Bool status;
+
+	status = !id->status;
+
+	Evas_Object *check = elm_object_item_part_content_get(ei, "elm.swallow.end");
+	elm_check_state_set(check, status);
+	evas_object_smart_callback_call(check, "changed", data);
 
 	/* Unhighlight selected item */
 	elm_genlist_item_selected_set(ei, EINA_FALSE);
@@ -70,9 +78,9 @@ static char* _gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 		return strdup(id->label);
 	}
 
-#if 0	
+#if 1	
 	if (!strcmp(part, "elm.text.sub") && id->index != 0) {
-# else 
+#else 
 	if (!strcmp(part, "elm.text.sub")) {
 #endif
 		return strdup(id->description);
@@ -84,7 +92,7 @@ static char* _gl_text_get_cb(void *data, Evas_Object *obj, const char *part)
 static Evas_Object* _gl_content_get_cb(void *data, Evas_Object *obj, const char *part)
 {
 	pg_item_data_s *id = (pg_item_data_s*)data;
-#if 0
+#if 1
 	if (id->index == 0)
 		return NULL;
 #endif
@@ -158,7 +166,7 @@ void create_privacy_guard_package_list_view(struct app_data_s* ad)
 	itc->func.text_get = _gl_text_get_cb;
 	itc->func.del = _gl_del_cb;
 
-#if 0
+#if 1
 	// no content in the genlist
 	if (!pg_data_list) {
 
@@ -167,7 +175,7 @@ void create_privacy_guard_package_list_view(struct app_data_s* ad)
 		char temp[256] = {'\0',};
 		pg_item_data_s *item = calloc(sizeof(pg_item_data_s), 1);
 		item->index = 0;
-		snprintf(temp, sizeof(temp), "<font color=#A9A9A9FF>No apps using %s privacy.</font>", ad->privacy);
+		snprintf(temp, sizeof(temp), "<font color=#A9A9A9FF>No app using %s privacy.</font>", ad->privacy);
 		item->label = strdup(temp);
 
 		// append to the genlist
@@ -180,7 +188,7 @@ void create_privacy_guard_package_list_view(struct app_data_s* ad)
 		Elm_Object_Item *it = NULL;
 		GList* l;
 
-#if 0
+#if 1
 		/* Append guide text to the top of genlist */
 		pg_item_data_s *description_item = calloc(sizeof(pg_item_data_s), 1);
 		description_item->index = 0;
@@ -228,8 +236,8 @@ void create_privacy_guard_package_list_view(struct app_data_s* ad)
 			item->label = strdup(temp);
 
 			// description
-			//snprintf(temp, sizeof(temp), "<font color=#3DB9CCFF>%d</font> time(s)", data->count);
-			snprintf(temp, sizeof(temp), "<font color=#3DB9CCFF>%d</font> %s", data->count, dgettext("privacy-setting", "IDS_CLD_OPT_TIMES_LC"));
+			snprintf(temp, sizeof(temp), "<font color=#3DB9CCFF>%d</font> time(s)", data->count);
+			//snprintf(temp, sizeof(temp), "<font color=#3DB9CCFF>%d</font> %s", data->count, dgettext("privacy-setting", "IDS_CLD_OPT_TIMES_LC"));
 			item->description = strdup(temp);
 
 			// user ID
@@ -263,7 +271,7 @@ void create_privacy_guard_package_list_view(struct app_data_s* ad)
 			it = elm_genlist_item_append(genlist, itc, item, NULL, ELM_GENLIST_ITEM_NONE, _privacy_package_selected_cb, item);
 			log_if(it == NULL, 1, "Error in elm_genlist_item_append");
 		}
-#if 0
+#if 1
 	}
 #endif
 
