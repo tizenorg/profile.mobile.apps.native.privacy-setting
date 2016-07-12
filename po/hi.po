@@ -1,6 +1,12 @@
+msgid "IDS_TPLATFORM_BUTTON_SAVE"
+msgstr "सुरक्षित"
+
 msgid "IDS_ST_HEADER_PRIVACY_AND_SAFETY_ABB"
 msgstr "गोपनीयता और सुरक्षा"
 
 msgid "IDS_CLD_OPT_TIMES_LC"
 msgstr "बार"
+
+msgid "IDS_ST_HEADER_PRIVACY_SETTINGS_ABB"
+msgstr "गोपनीयता सेटिंग्स"
 

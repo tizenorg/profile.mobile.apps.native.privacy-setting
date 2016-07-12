@@ -1,6 +1,12 @@
+msgid "IDS_TPLATFORM_BUTTON_SAVE"
+msgstr "Сохранить"
+
 msgid "IDS_ST_HEADER_PRIVACY_AND_SAFETY_ABB"
 msgstr "Конфиденц. и безопасность"
 
 msgid "IDS_CLD_OPT_TIMES_LC"
 msgstr "раз."
+
+msgid "IDS_ST_HEADER_PRIVACY_SETTINGS_ABB"
+msgstr "Настройки конфиденц."
 

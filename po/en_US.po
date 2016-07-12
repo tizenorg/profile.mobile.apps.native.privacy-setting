@@ -1,6 +1,12 @@
+msgid "IDS_TPLATFORM_BUTTON_SAVE"
+msgstr "Save"
+
 msgid "IDS_ST_HEADER_PRIVACY_AND_SAFETY_ABB"
 msgstr "Privacy and safety"
 
 msgid "IDS_CLD_OPT_TIMES_LC"
 msgstr "times"
+
+msgid "IDS_ST_HEADER_PRIVACY_SETTINGS_ABB"
+msgstr "Privacy settings"
 

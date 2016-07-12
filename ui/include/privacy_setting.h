@@ -29,7 +29,7 @@
 #include <glib.h>
 #include <app.h>
 
-#define PRIVACY_MENU_SETTING "Privacy Setting"
+#define PRIVACY_MENU_SETTING "IDS_ST_HEADER_PRIVACY_SETTINGS_ABB"
 #define PRIVACY_MENU_ACCESS "Privacy Access"
 
 struct app_data_s {

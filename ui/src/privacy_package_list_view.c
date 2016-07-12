@@ -85,14 +85,14 @@ static void privacy_package_check_changed_cb(void *data, Evas_Object *obj, void 
 	}
 	if (change_cnt > 0) {
 		if (first) {
-			elm_object_text_set(save_btn, "SAVE");
+			elm_object_text_set(save_btn, dgettext("privacy-setting", "IDS_TPLATFORM_BUTTON_SAVE"));
 			elm_object_disabled_set(save_btn, EINA_FALSE);
 		}
 		evas_object_show(save_btn);
 		LOGD("save_btn enabled");
 	} else {
 		evas_object_hide(save_btn);
-		LOGD("save_btn diabled");
+		LOGD("save_btn disabled");
 	}
 }
 
@@ -478,7 +478,6 @@ void create_privacy_package_list_view(struct app_data_s* ad)
 		snprintf(temp, sizeof(temp), "<font color=#A9A9A9FF>No apps using %s privacy.</font>", dgettext("privilege", privacy_display));
 		id->title = strdup(temp);
 
-		// append to the genlist
 		it = elm_genlist_item_append(genlist, itc, id, NULL, ELM_GENLIST_ITEM_NONE, NULL, NULL);
 		log_if(it == NULL, 1, "Error in elm_genlist_item_append");
 		elm_genlist_item_select_mode_set(it, ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
@@ -486,10 +485,8 @@ void create_privacy_package_list_view(struct app_data_s* ad)
 		for (l = pkg_data_list; l != NULL; l = l->next) {
 			item_data_s *id = calloc(sizeof(item_data_s), 1);
 			id->index = i++;
-			char temp[256];
 			pkg_data_s* pkg_data = (pkg_data_s*)l->data;
 			id->pkgid = strdup(pkg_data->pkgid);
-			snprintf(temp, sizeof(temp), "%d : %s", i, pkg_data->pkgid);
 			id->title = pkg_data->label;
 			id->icon = pkg_data->icon;
 			/* Get privacy status of given package */
@@ -503,7 +500,6 @@ void create_privacy_package_list_view(struct app_data_s* ad)
 	elm_genlist_item_class_free(itc);
 	evas_object_show(genlist);
 
-	/* TBD: change nf_it_title to proper DID : use dgettext() */
 	char* privacy_display = NULL;
 	ret = privilege_info_get_privacy_display(ad->privacy, &privacy_display);
 	log_if(ret != PRVMGR_ERR_NONE, 1, "privacy_display = %s", privacy_display);

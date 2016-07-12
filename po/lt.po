@@ -1,6 +1,12 @@
+msgid "IDS_TPLATFORM_BUTTON_SAVE"
+msgstr "Išsaugoti"
+
 msgid "IDS_ST_HEADER_PRIVACY_AND_SAFETY_ABB"
 msgstr "Privatumas ir sauga"
 
 msgid "IDS_CLD_OPT_TIMES_LC"
 msgstr "kartai"
+
+msgid "IDS_ST_HEADER_PRIVACY_SETTINGS_ABB"
+msgstr "Privatumo nustatymai"
 

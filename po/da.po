@@ -1,6 +1,12 @@
+msgid "IDS_TPLATFORM_BUTTON_SAVE"
+msgstr "Gem"
+
 msgid "IDS_ST_HEADER_PRIVACY_AND_SAFETY_ABB"
 msgstr "Fortrolighed og sikkerhed"
 
 msgid "IDS_CLD_OPT_TIMES_LC"
 msgstr "gange"
+
+msgid "IDS_ST_HEADER_PRIVACY_SETTINGS_ABB"
+msgstr "Fortrolighedsindst."
 
