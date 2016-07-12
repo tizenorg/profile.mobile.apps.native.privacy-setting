@@ -4,3 +4,6 @@ msgstr "Súkromie a bezpečnosť"
 msgid "IDS_CLD_OPT_TIMES_LC"
 msgstr "krát"
 
+msgid "IDS_ST_HEADER_PRIVACY_SETTINGS_ABB"
+msgstr "Nastavenia súkromia"
+

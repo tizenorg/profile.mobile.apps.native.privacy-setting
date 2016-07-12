@@ -4,3 +4,6 @@ msgstr "Privaatsus ja turvalisus"
 msgid "IDS_CLD_OPT_TIMES_LC"
 msgstr "korda"
 
+msgid "IDS_ST_HEADER_PRIVACY_SETTINGS_ABB"
+msgstr "Privaatsuse seaded"
+

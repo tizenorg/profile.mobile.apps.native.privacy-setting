@@ -4,3 +4,6 @@ msgstr "गोपनीयता और सुरक्षा"
 msgid "IDS_CLD_OPT_TIMES_LC"
 msgstr "बार"
 
+msgid "IDS_ST_HEADER_PRIVACY_SETTINGS_ABB"
+msgstr "गोपनीयता सेटिंग्स"
+

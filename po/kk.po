@@ -4,3 +4,6 @@ msgstr "Құпия және қауіпсіз"
 msgid "IDS_CLD_OPT_TIMES_LC"
 msgstr "рет"
 
+msgid "IDS_ST_HEADER_PRIVACY_SETTINGS_ABB"
+msgstr "Құпиялылық параметрлер"
+

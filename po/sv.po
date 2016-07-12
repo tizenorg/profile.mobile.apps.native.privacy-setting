@@ -4,3 +4,6 @@ msgstr "Sekretess och säkerhet"
 msgid "IDS_CLD_OPT_TIMES_LC"
 msgstr "gånger"
 
+msgid "IDS_ST_HEADER_PRIVACY_SETTINGS_ABB"
+msgstr "Sekretessinställningar"
+

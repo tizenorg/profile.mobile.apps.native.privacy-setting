@@ -4,3 +4,6 @@ msgstr "Zasebnost in varnost"
 msgid "IDS_CLD_OPT_TIMES_LC"
 msgstr "krat"
 
+msgid "IDS_ST_HEADER_PRIVACY_SETTINGS_ABB"
+msgstr "Nastavitve zasebnosti"
+

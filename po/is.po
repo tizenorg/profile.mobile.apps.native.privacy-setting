@@ -4,3 +4,6 @@ msgstr "Persónuvernd og öryggi"
 msgid "IDS_CLD_OPT_TIMES_LC"
 msgstr "sinnum"
 
+msgid "IDS_ST_HEADER_PRIVACY_SETTINGS_ABB"
+msgstr "Persónuverndarstill."
+

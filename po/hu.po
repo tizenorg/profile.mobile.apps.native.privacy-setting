@@ -4,3 +4,6 @@ msgstr "Adatvédelem és biztonság"
 msgid "IDS_CLD_OPT_TIMES_LC"
 msgstr "alkalommal"
 
+msgid "IDS_ST_HEADER_PRIVACY_SETTINGS_ABB"
+msgstr "Adatvédelmi beállítások"
+
